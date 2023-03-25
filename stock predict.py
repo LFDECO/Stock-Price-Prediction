@@ -66,13 +66,19 @@ else:
     predictions = []
     for i in range(n):
         next_day = model.predict(last_n_days.reshape(1, predict_days, 1))
-        predictions.append(next_day[0][0])
+        prediction = sclr.inverse_transform(next_day)[0][0]
+        predictions.append(prediction)
+        if i > 0:
+            prev_prediction = predictions[i-1]
+            change = (prediction-prev_prediction)/prev_prediction * 100
+            if change > 0:
+                print(f"Day {i+1}: Price has increased by {change:.2f}% to {prediction:.2f}")
+            else:
+                print(f"Day {i+1}: Price has decreased by {-change:.2f}% to {prediction:.2f}")
+        else:
+            print(f"Day {i+1}: {prediction:.2f}")
         last_n_days = np.append(last_n_days, next_day)[1:]
-
+    
     # Scale predictions back to original values
     predictions = np.array(predictions).reshape(-1, 1)
     predictions = sclr.inverse_transform(predictions)
-
-    # Print predicted prices for the next n days
-    for i in range(n):
-        print(f"Day {i+1}: {predictions[i][0]}")
