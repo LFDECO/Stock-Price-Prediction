@@ -79,6 +79,3 @@ else:
             print(f"Day {i+1}: {prediction:.2f}")
         last_n_days = np.append(last_n_days, next_day)[1:]
     
-    # Scale predictions back to original values
-    predictions = np.array(predictions).reshape(-1, 1)
-    predictions = sclr.inverse_transform(predictions)
